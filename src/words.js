@@ -1,0 +1,1 @@
+export const boardDefault = Array(5).fill(null).map( () => Array(5)); // defaults to 5 letter word, 6 attempts
