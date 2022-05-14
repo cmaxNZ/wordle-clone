@@ -16,6 +16,7 @@ nav {
 	height: 60px;
 	width: 100%;
 	margin: 0;
+	padding-top: 10px;
 	border-bottom: 1px solid grey;
 	display: grid;
 	place-items: center;
@@ -125,4 +126,8 @@ nav h1 {
 
 .error {
 	background-color: #3a393c;
+}
+
+.gameOver {
+	padding-top: 30px;
 }

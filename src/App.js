@@ -1,20 +1,42 @@
 import './App.css';
 import Board from './components/board';
 import Keyboard from './components/keyboard';
-import { boardDefault, testWord, defaultBoardObject } from "./words";
+import GameOver from './components/gameOver';
+import { defaultBoard, generateWords, defaultGuessedLetters, defaultAttempts } from "./words";
 import { createContext, useEffect, useState } from "react";
 
 export const AppContext = createContext();
 
 function App() {
-	const [board, setBoard] = useState(defaultBoardObject);
-	const [word, setWord] = useState(testWord.toUpperCase());
-	const [currentAttempt, setCurrentAttempt] = useState({ attempt: 0, letterPosition: 0 });
-	const [guessedLetters, setGuessedLetters] = useState({'ENTER':'disabled', '⇦':'disabled'});
+	const [board, setBoard] = useState(defaultBoard);
+	const [words, setWords] = useState();
+	const [word, setWord] = useState();
+	const [currentAttempt, setCurrentAttempt] = useState(defaultAttempts);
+	const [guessedLetters, setGuessedLetters] = useState(defaultGuessedLetters);
+	const [gameOver, setGameOver] = useState({ gameOver: false, won: false });
+
+	useEffect(() => {
+		generateWords().then((words) => {
+			setWords(words);
+			const word = words[Math.floor(Math.random() * words.length)];
+			setWord(word.toUpperCase());
+		});
+	}, []);
+
+	const initGame = () => {
+		// console.log('initialising');
+		// const word = words[Math.floor(Math.random() * words.length)];
+		// setWord(word.toUpperCase());q
+		// setBoard(defaultBoard);
+		// setGameOver({ gameOver: false, won: false });
+		// setGuessedLetters(defaultGuessedLetters);
+		// setCurrentAttempt(defaultAttempts);
+		// console.log('board', board[0])
+	};
 
 	const onLetter = (keyValue) => {
 		// check ended game
-		if (currentAttempt.attempt >= board.length) return;
+		if (gameOver.gameOver || currentAttempt.attempt >= board.length) return;
 		// don't allow adding letter to full row
 		if (currentAttempt.letterPosition >= board[0].length) return;
 
@@ -25,13 +47,12 @@ function App() {
 
 		guessedLetters['ENTER'] = currentAttempt.letterPosition === board[0].length - 1 ? '' : 'disabled';
 		guessedLetters['⇦'] = '';
-
 		setGuessedLetters(guessedLetters);
 	};
 
 	const onEnter = () => {
 		// check ended game
-		if (currentAttempt.attempt >= board.length) return
+		if (gameOver.gameOver || currentAttempt.attempt >= board.length) return
 		// don't allow submit if row not full
 		if (currentAttempt.letterPosition !== board[0].length) return
 
@@ -41,10 +62,7 @@ function App() {
 				elem.state = 'correct';
 				guessedLetters[elem.value] = elem.state;
 			}
-			setCurrentAttempt({ attempt: board.length }); // setting attempt to equal to length of board 'ends' game
-			guessedLetters['ENTER'] = 'disabled';
-			guessedLetters['⇦'] = 'disabled';
-			setGuessedLetters(guessedLetters);
+			setGameOver({ gameOver: true, won: true });
 			return;
 		} else {
 			for (let [i, elem] of board[currentAttempt.attempt].entries()) {
@@ -71,19 +89,23 @@ function App() {
 		guessedLetters['ENTER'] = 'disabled';
 		guessedLetters['⇦'] = 'disabled';
 		setGuessedLetters(guessedLetters);
-		setCurrentAttempt({ attempt: currentAttempt.attempt + 1, letterPosition: 0 }); // setting attempt to equal to length of board 'ends' game
+		if (currentAttempt.attempt >= board.length - 1) {
+			setGameOver({ gameOver: true, won: false });
+		} else {
+			setCurrentAttempt({ attempt: currentAttempt.attempt + 1, letterPosition: 0 });
+		}
 	};
 
 	const onDelete = () => {
 		// check ended game
-		if (currentAttempt.attempt >= board.length) return
+		if (gameOver.gameOver ||  currentAttempt.attempt >= board.length) return
 		// don't allow backspace on empty row
 		if (currentAttempt.letterPosition < 1 ) return
+
 		const newBoard = [...board];
 		newBoard[currentAttempt.attempt][currentAttempt.letterPosition - 1].value = '';
 		setBoard(newBoard);
 		setCurrentAttempt({ ...currentAttempt, letterPosition: currentAttempt.letterPosition - 1 });
-		console.log(currentAttempt.letterPosition)
 		// show backspace if row is empty
 		if (currentAttempt.letterPosition <= 1) {
 			guessedLetters['⇦'] = 'disabled';
@@ -107,10 +129,13 @@ function App() {
 						onDelete, 
 						onEnter,
 						guessedLetters, 
+						gameOver,
+						word,
+						initGame
 					}}
 				>
 					<Board />
-					<Keyboard />
+					{gameOver.gameOver ? <GameOver /> : <Keyboard />}
 				</AppContext.Provider>
 			</div>
 		</div>
