@@ -48,7 +48,7 @@ function Keyboard() {
 		<div className="row3">
 			<Key keyValue={"ENTER"} keySize={"big"}/>
 			{mapKeys(row3)}
-			<Key keyValue={String.fromCharCode(8678)} keySize={'big'}/>
+			<Key keyValue={"⇦"} keySize={'big'}/>
 		</div>
 	</div>
 }

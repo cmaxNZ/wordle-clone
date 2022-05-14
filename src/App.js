@@ -10,17 +10,23 @@ function App() {
 	const [board, setBoard] = useState(defaultBoardObject);
 	const [word, setWord] = useState(testWord.toUpperCase());
 	const [currentAttempt, setCurrentAttempt] = useState({ attempt: 0, letterPosition: 0 });
-	const [guessedLetters, setGuessedLetters] = useState(new Object());
+	const [guessedLetters, setGuessedLetters] = useState({'ENTER':'disabled', '⇦':'disabled'});
 
 	const onLetter = (keyValue) => {
 		// check ended game
-		if (currentAttempt.attempt >= board.length) return
+		if (currentAttempt.attempt >= board.length) return;
 		// don't allow adding letter to full row
-		if (currentAttempt.letterPosition >= board[0].length) return
+		if (currentAttempt.letterPosition >= board[0].length) return;
+
 		const newBoard = [...board];
 		newBoard[currentAttempt.attempt][currentAttempt.letterPosition].value = keyValue.toUpperCase();
 		setBoard(newBoard);
 		setCurrentAttempt({ ...currentAttempt, letterPosition: currentAttempt.letterPosition + 1 });
+
+		guessedLetters['ENTER'] = currentAttempt.letterPosition === board[0].length - 1 ? '' : 'disabled';
+		guessedLetters['⇦'] = '';
+
+		setGuessedLetters(guessedLetters);
 	};
 
 	const onEnter = () => {
@@ -35,8 +41,10 @@ function App() {
 				elem.state = 'correct';
 				guessedLetters[elem.value] = elem.state;
 			}
-			setGuessedLetters(guessedLetters);
 			setCurrentAttempt({ attempt: board.length }); // setting attempt to equal to length of board 'ends' game
+			guessedLetters['ENTER'] = 'disabled';
+			guessedLetters['⇦'] = 'disabled';
+			setGuessedLetters(guessedLetters);
 			return;
 		} else {
 			for (let [i, elem] of board[currentAttempt.attempt].entries()) {
@@ -60,6 +68,8 @@ function App() {
 				}
 			}
 		}
+		guessedLetters['ENTER'] = 'disabled';
+		guessedLetters['⇦'] = 'disabled';
 		setGuessedLetters(guessedLetters);
 		setCurrentAttempt({ attempt: currentAttempt.attempt + 1, letterPosition: 0 }); // setting attempt to equal to length of board 'ends' game
 	};
@@ -68,11 +78,17 @@ function App() {
 		// check ended game
 		if (currentAttempt.attempt >= board.length) return
 		// don't allow backspace on empty row
-		if (currentAttempt.letterPosition === 0) return
+		if (currentAttempt.letterPosition < 1 ) return
 		const newBoard = [...board];
-		newBoard[currentAttempt.attempt][currentAttempt.letterPosition - 1] = null;
+		newBoard[currentAttempt.attempt][currentAttempt.letterPosition - 1].value = '';
 		setBoard(newBoard);
 		setCurrentAttempt({ ...currentAttempt, letterPosition: currentAttempt.letterPosition - 1 });
+		console.log(currentAttempt.letterPosition)
+		// show backspace if row is empty
+		if (currentAttempt.letterPosition <= 1) {
+			guessedLetters['⇦'] = 'disabled';
+			setGuessedLetters(guessedLetters);
+		}
 	};
 
 	return (

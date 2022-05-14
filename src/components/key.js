@@ -12,7 +12,7 @@ function Key({keyValue, keySize = ''}) {
 			case 'ENTER':
 				onEnter();
 				break;
-			case String.fromCharCode(8678):
+			case '⇦':
 				onDelete();
 				break;
 			default:
