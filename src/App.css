@@ -64,25 +64,13 @@ nav h1 {
 	font-family: Arial, Helvetica, sans-serif;
 }
 
-.correct {
-	background-color: #528d4e;
-}
-
-.almost {
-	background-color: #b49f39;
-}
-
-.error {
-	background-color: #3a393c;
-}
-
 .keyboard {
 	width: 700px;
 	height: 300px;
 	margin-top: 60px;
 }
 
-.line1 {
+.row1 {
 	flex: 33%;
 	display: flex;
 	flex-direction: row;
@@ -90,14 +78,14 @@ nav h1 {
 	justify-content: center;
 	margin: 5px;
 }
-.line2 {
+.row2 {
 	flex: 33%;
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
 	margin: 5px;
 }
-.line3 {
+.row3 {
 	flex: 33%;
 	display: flex;
 	flex-direction: row;
@@ -122,6 +110,19 @@ nav h1 {
 .big {
 	width: 100px;
 }
+
 .disabled {
+	background-color: #3a393c;
+}
+
+.correct {
+	background-color: #528d4e;
+}
+
+.almost {
+	background-color: #b49f39;
+}
+
+.error {
 	background-color: #3a393c;
 }

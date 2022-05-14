@@ -3,6 +3,7 @@ import { AppContext } from "../App";
 import Key from "./key"
 
 function mapKeys(row) { 
+	// check if the key has been used before, pass along state if has been
 	return row.map( key => <Key keyValue={key} /> );
 }
 
@@ -11,7 +12,6 @@ function Keyboard() {
 	const row2 = ["A", "S", "D", "F", "G", "H", "J", "K", "L"];
 	const row3 = ["Z", "X", "C", "V", "B", "N", "M"];
 	const { onLetter, onDelete, onEnter } = useContext(AppContext);
-
 	// on screen key handling is done in keys.js
 	const handleKeyboard = useCallback((event) => {
 		switch(event.key) { 
@@ -39,13 +39,13 @@ function Keyboard() {
 	}, [handleKeyboard]);
 	
 	return <div className="keyboard" onKeyUp={handleKeyboard}>
-		<div className="line1">
+		<div className="row1">
 			{mapKeys(row1)}
 		</div>
-		<div className="line2">
+		<div className="row2">
 			{mapKeys(row2)}
 		</div>        
-		<div className="line3">
+		<div className="row3">
 			<Key keyValue={"ENTER"} keySize={"big"}/>
 			{mapKeys(row3)}
 			<Key keyValue={String.fromCharCode(8678)} keySize={'big'}/>

@@ -7,10 +7,10 @@ import { createContext, useEffect, useState } from "react";
 export const AppContext = createContext();
 
 function App() {
-	const [board2, setBoard2] = useState(boardDefault);
 	const [board, setBoard] = useState(defaultBoardObject);
 	const [word, setWord] = useState(testWord.toUpperCase());
-	const [currentAttempt, setCurrentAttempt] = useState({ attempt: 0, letterPosition: 0 })
+	const [currentAttempt, setCurrentAttempt] = useState({ attempt: 0, letterPosition: 0 });
+	const [guessedLetters, setGuessedLetters] = useState(new Object());
 
 	const onLetter = (keyValue) => {
 		// check ended game
@@ -19,7 +19,6 @@ function App() {
 		if (currentAttempt.letterPosition >= board[0].length) return
 		const newBoard = [...board];
 		newBoard[currentAttempt.attempt][currentAttempt.letterPosition].value = keyValue.toUpperCase();
-		console.log('new board', newBoard[currentAttempt.attempt][currentAttempt.letterPosition])
 		setBoard(newBoard);
 		setCurrentAttempt({ ...currentAttempt, letterPosition: currentAttempt.letterPosition + 1 });
 	};
@@ -29,27 +28,39 @@ function App() {
 		if (currentAttempt.attempt >= board.length) return
 		// don't allow submit if row not full
 		if (currentAttempt.letterPosition !== board[0].length) return
-			console.log(word);
-			const attemptWord = board[currentAttempt.attempt].map(i => i.value).join('');
-			console.log(attemptWord);
-			if (word === attemptWord) {
-				for (let elem of board[currentAttempt.attempt]) {
-					elem.state = 'correct';
-				}
-				setCurrentAttempt({ attempt: board.length }); // setting attempt to equal to length of board 'ends' game
-				return;
-			} else {
-				console.log('not full match')
-				for (let [i, elem] of board[currentAttempt.attempt].entries()) {
-					if (word.includes(elem.value)) {
-						if (word[i] === elem.value) {
-							elem.state = 'correct';
-						} else {
-							elem.state = 'almost';
-						}
+
+		const attemptWord = board[currentAttempt.attempt].map(i => i.value).join('');
+		if (word === attemptWord) {
+			for (let elem of board[currentAttempt.attempt]) {
+				elem.state = 'correct';
+				guessedLetters[elem.value] = elem.state;
+			}
+			setGuessedLetters(guessedLetters);
+			setCurrentAttempt({ attempt: board.length }); // setting attempt to equal to length of board 'ends' game
+			return;
+		} else {
+			for (let [i, elem] of board[currentAttempt.attempt].entries()) {
+				if (word.includes(elem.value)) {
+					if (word[i] === elem.value) {
+						elem.state = 'correct';
+					} else {
+						elem.state = 'almost';
 					}
+					// update the guessed letters collection
+					if (guessedLetters[elem.value]) {
+						if (guessedLetters[elem.value] !== elem.state && guessedLetters[elem.value] !== 'correct') {
+							guessedLetters[elem.value] = elem.state;
+						}
+					} else {
+						guessedLetters[elem.value] = elem.state;
+					}
+				} else {
+					// set incorrect letter for keyboard display
+					guessedLetters[elem.value] = 'error';
 				}
 			}
+		}
+		setGuessedLetters(guessedLetters);
 		setCurrentAttempt({ attempt: currentAttempt.attempt + 1, letterPosition: 0 }); // setting attempt to equal to length of board 'ends' game
 	};
 
@@ -78,7 +89,8 @@ function App() {
 						setCurrentAttempt, 
 						onLetter, 
 						onDelete, 
-						onEnter 
+						onEnter,
+						guessedLetters, 
 					}}
 				>
 					<Board />

@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
 import { AppContext } from "../App";
 
-function Key({keyValue, keySize}) {
-	const classes = `key ${keySize}`
-	const { onLetter, onDelete, onEnter } = useContext(AppContext);
+function Key({keyValue, keySize = ''}) {
+	const { onLetter, onDelete, onEnter, guessedLetters } = useContext(AppContext);
+	const keyState = guessedLetters[keyValue] ? guessedLetters[keyValue] : '';
+	const classes = `key ${keySize} ${keyState}`;
 	
 	// keyboard input handed in keyboard.js
 	const selectKey = () => {
