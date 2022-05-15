@@ -1,12 +1,22 @@
 import wordBank from './wordle-bank.txt';
 
-export const defaultGuessedLetters = { 'ENTER':'disabled', '⇦':'disabled' };
-export const defaultBoard = Array.from(Array(5), () => {
-	return Array.from(Array(5), () => {
-		return { "value": '', "state": '' };
-	})
-});
-export const defaultAttempts = { attempt: 0, letterPosition: 0 };
+export const defaultGuessedLetters = () => {
+	return { 'ENTER':'disabled', '⇦':'disabled' };
+};
+
+export const defaultBoard = () => {
+	return (
+			Array.from(Array(5), () => {
+			return Array.from(Array(5), () => {
+				return { "value": '', "state": '' };
+			})
+		})
+	);
+};
+
+export const defaultAttempts = () => {
+	return { attempt: 0, letterPosition: 0 };
+};
 
 export const generateWords = async () => {
 	let wordArray;

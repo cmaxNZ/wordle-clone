@@ -15,6 +15,7 @@ function App() {
 	const [guessedLetters, setGuessedLetters] = useState(defaultGuessedLetters);
 	const [gameOver, setGameOver] = useState({ gameOver: false, won: false });
 
+	// if strict mode is on it will set this twice as the render is done twice...
 	useEffect(() => {
 		generateWords().then((words) => {
 			setWords(words);
@@ -24,14 +25,13 @@ function App() {
 	}, []);
 
 	const initGame = () => {
-		// console.log('initialising');
-		// const word = words[Math.floor(Math.random() * words.length)];
-		// setWord(word.toUpperCase());q
-		// setBoard(defaultBoard);
-		// setGameOver({ gameOver: false, won: false });
-		// setGuessedLetters(defaultGuessedLetters);
-		// setCurrentAttempt(defaultAttempts);
-		// console.log('board', board[0])
+		const word = words[Math.floor(Math.random() * words.length)];
+		setWord(word.toUpperCase());
+		console.log('reset word', word);
+		setBoard(defaultBoard);
+		setGameOver({ gameOver: false, won: false });
+		setGuessedLetters(defaultGuessedLetters);
+		setCurrentAttempt(defaultAttempts);
 	};
 
 	const onLetter = (keyValue) => {
